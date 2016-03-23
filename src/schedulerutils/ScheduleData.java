@@ -7,7 +7,7 @@ import schedulerentities.Instructor;
 import schedulerentities.MeetingPlaceTime;
 import schedulerentities.Section;
 import schedulerentities.Session;
-import schedulerentities.Subject;
+import schedulerentities.Course;
 import schedulerentities.Term;
 
 public abstract class ScheduleData {
@@ -18,19 +18,19 @@ public abstract class ScheduleData {
 	public abstract Term getTerm(int termID);
 	
 	// Subjects
-	public abstract ArrayList<Subject> getAllSubjectsForTerm(Term term);
-	public abstract ArrayList<Subject> getSubjects(Term term, String subjectName, Integer subjectNum); // for subject name and number with different titles
-	public abstract Subject getSubject(Term term, String subjectName, String subjectNum);
-	public abstract Subject getSubject(Term term, String subjectName, Integer subjectNum);
+	public abstract ArrayList<Course> getAllSubjectsForTerm(Term term);
+	public abstract ArrayList<Course> getSubjects(Term term, String subjectName, Integer subjectNum); // for subject name and number with different titles
+	public abstract Course getSubject(Term term, String subjectName, String subjectNum);
+	public abstract Course getSubject(Term term, String subjectName, Integer subjectNum);
 	
 	// Instructors
 	public abstract ArrayList<Instructor> getAllInstructors(Term term);
-	public abstract ArrayList<Instructor> getInstructors(Term term, Subject subject);
+	public abstract ArrayList<Instructor> getInstructors(Term term, Course subject);
 	public abstract ArrayList<Instructor> getInstructors(Section section);
 	
 	// Sections
 	public abstract ArrayList<Section> getAllSections(Term term);
-	public abstract ArrayList<Section> getSections(Subject... subjects);
+	public abstract ArrayList<Section> getSections(Course... subjects);
 	public abstract ArrayList<Section> getSections(Instructor... instructors);
 	public abstract Section getSection(Integer CRN);
 	
@@ -40,17 +40,18 @@ public abstract class ScheduleData {
 	
 	// Campuses
 	public abstract ArrayList<Campus> getAllCampuses(Term term);
-	public abstract ArrayList<Campus> getCampuses(Subject... subjects);
+	public abstract ArrayList<Campus> getCampuses(Course... subjects);
 	public abstract Campus getCampus(Section section); // null if online class
 	
 	// Sessions
 	public abstract ArrayList<Session> getAllSessions(Term term);
-	public abstract ArrayList<Session> getAvailableSessions(Term term, Subject subject);
-	public abstract Session getSession(int CRN);
+	public abstract ArrayList<Session> getAvailableSessions(Term term, Course subject);
+	
 	
 	// Instructional Methods
 	public abstract ArrayList<String> getInstructionalMethods(Term term);
-	public abstract ArrayList<String> getInstructionalMethods(Subject... subjects);
+	public abstract ArrayList<String> getInstructionalMethods(Course... subjects);
 	public abstract ArrayList<String> getInstructionalMethod(Section section);
 	public abstract ArrayList<String> getInstructionalMethod(Integer CRN);
+	
 }

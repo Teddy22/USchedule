@@ -9,7 +9,7 @@ import schedulerentities.Instructor;
 import schedulerentities.MeetingPlaceTime;
 import schedulerentities.Section;
 import schedulerentities.Session;
-import schedulerentities.Subject;
+import schedulerentities.Course;
 import schedulerentities.Term;
 
 public class ClassSchedulerData extends ScheduleData {
@@ -55,25 +55,25 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<Subject> getAllSubjectsForTerm(Term term) {
+	public ArrayList<Course> getAllSubjectsForTerm(Term term) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<Subject> getSubjects(Term term, String subjectName, Integer subjectNum) {
+	public ArrayList<Course> getSubjects(Term term, String subjectName, Integer subjectNum) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Subject getSubject(Term term, String subjectName, String subjectNum) {
+	public Course getSubject(Term term, String subjectName, String subjectNum) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Subject getSubject(Term term, String subjectName, Integer subjectNum) {
+	public Course getSubject(Term term, String subjectName, Integer subjectNum) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -85,7 +85,7 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<Instructor> getInstructors(Term term, Subject subject) {
+	public ArrayList<Instructor> getInstructors(Term term, Course subject) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -103,7 +103,7 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<Section> getSections(Subject... subjects) {
+	public ArrayList<Section> getSections(Course... subjects) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -139,7 +139,7 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<Campus> getCampuses(Subject... subjects) {
+	public ArrayList<Campus> getCampuses(Course... subjects) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -157,13 +157,7 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<Session> getAvailableSessions(Term term, Subject subject) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Session getSession(int CRN) {
+	public ArrayList<Session> getAvailableSessions(Term term, Course subject) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -175,7 +169,7 @@ public class ClassSchedulerData extends ScheduleData {
 	}
 
 	@Override
-	public ArrayList<String> getInstructionalMethods(Subject... subjects) {
+	public ArrayList<String> getInstructionalMethods(Course... subjects) {
 		// TODO Auto-generated method stub
 		return null;
 	}

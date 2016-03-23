@@ -7,7 +7,7 @@ public class Section {
 	private Term term;
 	private Session session;
 	
-	private Subject subject;
+	private Course subject;
 	private int CRN;
 	
 	private CreditHours creditHours;

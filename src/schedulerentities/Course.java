@@ -1,20 +1,20 @@
 package schedulerentities;
 
-public class Subject {
+public class Course {
 	private String subjectName;
 	private String subjectNum;
 	private String subjectTitle;
 	
-	private Subject() {}
+	private Course() {}
 	
-	public Subject(String courseName, String courseNum, String courseTitle) {
+	public Course(String courseName, String courseNum, String courseTitle) {
 		super();
 		this.subjectName = courseName;
 		this.subjectNum = courseNum;
 		this.subjectTitle = courseTitle;
 	}
 	
-	public Subject(String subjectName, Integer subjectNum, String subjectTitle) {
+	public Course(String subjectName, Integer subjectNum, String subjectTitle) {
 		super();
 		this.subjectName = subjectName;
 		this.subjectNum = subjectNum.toString();
