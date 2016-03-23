@@ -25,6 +25,7 @@ public class Term {
 		return this.termName;
 	}
 	
+	// get all sessions for the term e.g maymesters for summer
 	public ArrayList<Session> getSessions() {
 		throw new RuntimeException("method not yet implemented");
 	}
