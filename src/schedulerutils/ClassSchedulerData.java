@@ -4,16 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.jsoup.nodes.Document;
+
 import schedulerentities.Campus;
 import schedulerentities.Instructor;
 import schedulerentities.MeetingPlaceTime;
 import schedulerentities.Section;
 import schedulerentities.Session;
+import schedulerentities.Subject;
 import schedulerentities.Course;
 import schedulerentities.Term;
 
 public class ClassSchedulerData extends ScheduleData {
 
+	HashMap<Integer,Document> termDocs;
+	
 	@Override
 	public ArrayList<Term> getAllTerms() {
 		HashMap<String, String> termsMap = ScheduleDataExtractor.extractTermsMap();
@@ -33,72 +38,38 @@ public class ClassSchedulerData extends ScheduleData {
 		return termList;
 	}
 
-	@Override
-	public Term getTerm(String termName) {
-		
-		String[] args = termName.trim().split("\\s+");
-		
-		/*if(args.length == 2 && args[1].) {
-			ScheduleDataExtractor.extractTermsMap(args[0], args[1]);
-			
-			Term term = new Term(termID, termName);
-		}
-		
-		return null;*/
-		throw new RuntimeException();
-	}
 
 	@Override
-	public Term getTerm(int termID) {
-		// TODO Auto-generated method stub
+	public ArrayList<Course> getAllCourses(Term term) {
 		return null;
 	}
 
 	@Override
-	public ArrayList<Course> getAllSubjectsForTerm(Term term) {
+	public ArrayList<Course> getSubjects(Term term, Subject subject) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public ArrayList<Course> getSubjects(Term term, String subjectName, Integer subjectNum) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Course getSubject(Term term, String subjectName, String subjectNum) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Course getSubject(Term term, String subjectName, Integer subjectNum) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * @param Term object
+	 * @return ArrayList of Instructors for given term
+	 */
 	@Override
 	public ArrayList<Instructor> getAllInstructors(Term term) {
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> map = ScheduleDataExtractor.getInstructorsMap(term.getTermID());
+		ArrayList<Instructor> instructors = new ArrayList<>();
+		
+		for(String key: map.keySet()) {
+			Instructor instructor = new Instructor(key, map.get(key));
+			instructors.add(instructor);
+		}
+		return instructors;
 	}
-
-	@Override
-	public ArrayList<Instructor> getInstructors(Term term, Course subject) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ArrayList<Instructor> getInstructors(Section section) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public ArrayList<Section> getAllSections(Term term) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -184,6 +155,25 @@ public class ClassSchedulerData extends ScheduleData {
 	public ArrayList<String> getInstructionalMethod(Integer CRN) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param term: Term object
+	 * @return Subject Objects for subjects in a Term
+	 */
+	@Override
+	public ArrayList<Subject> getAllSubjects(Term term) {
+		HashMap<String, String> map = ScheduleDataExtractor.getSubjectsMap(term.getTermID());
+		
+		ArrayList<Subject> subjects= new ArrayList<>();
+		
+		for(String key: map.keySet()) {
+			Subject subject = new Subject(key, map.get(key));
+			subjects.add(subject);
+		}
+		
+		return subjects;
 	}
 
 }

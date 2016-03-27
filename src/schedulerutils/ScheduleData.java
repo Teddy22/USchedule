@@ -7,26 +7,44 @@ import schedulerentities.Instructor;
 import schedulerentities.MeetingPlaceTime;
 import schedulerentities.Section;
 import schedulerentities.Session;
+import schedulerentities.Subject;
 import schedulerentities.Course;
 import schedulerentities.Term;
 
 public abstract class ScheduleData {
 
-	// Terms
+	/**
+	 * @return ArrayList of all available Terms as found on web site
+	 */
 	public abstract ArrayList<Term> getAllTerms();
-	public abstract Term getTerm(String termName);
-	public abstract Term getTerm(int termID);
+
 	
-	// Subjects
-	public abstract ArrayList<Course> getAllSubjectsForTerm(Term term);
-	public abstract ArrayList<Course> getSubjects(Term term, String subjectName, Integer subjectNum); // for subject name and number with different titles
-	public abstract Course getSubject(Term term, String subjectName, String subjectNum);
-	public abstract Course getSubject(Term term, String subjectName, Integer subjectNum);
+	/**
+	 * 
+	 * @param term; Term Object
+	 * @return an ArrayList of Subjects for the given Term Object (semester)
+	 */
+	public abstract ArrayList<Subject> getAllSubjects(Term term);
+	
+	
+	/**
+	 * 
+	 * @param term - Term object representing a semester
+	 * @return ArrayList of Course objects
+	 */
+	public abstract ArrayList<Course> getAllCourses(Term term);
+	
+	public abstract ArrayList<Course> getSubjects(Term term, Subject subject); // for subject name and number with different titles
+	
 	
 	// Instructors
+	/**
+	 * 
+	 * @param term - Term object
+	 * @return ArrayList of all instructors for semester
+	 */
 	public abstract ArrayList<Instructor> getAllInstructors(Term term);
-	public abstract ArrayList<Instructor> getInstructors(Term term, Course subject);
-	public abstract ArrayList<Instructor> getInstructors(Section section);
+	
 	
 	// Sections
 	public abstract ArrayList<Section> getAllSections(Term term);

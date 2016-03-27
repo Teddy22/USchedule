@@ -1,22 +1,26 @@
 package schedulerentities;
 
 public class Instructor {
-	private String instructorID;
+	private String instructorId;
 	private String instructorName;
+
 	
-	
-	private Instructor() {}
-	
-	public Instructor(String instructorID) {
-		this.instructorID = instructorID;
+	public Instructor(String instructorId, String instructorName) {
+		this.instructorId = instructorId;
+		this.instructorName = instructorName;
 	}
 
-	public String getInstructorID() {
-		return instructorID;
+	public String getInstructorId() {
+		return instructorId;
 	}
 
 	public String getInstructorName() {
 		return instructorName;
+	}
+	
+	@Override
+	public String toString() {
+		return this.instructorName;
 	}
 	
 }
