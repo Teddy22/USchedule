@@ -169,6 +169,15 @@ public class ScheduleParser {
 		return doc;
 	}
 	
+	public static Document getAllSubjectsForTermPageHTML(Integer termValue, int timeout) {
+		ArrayList<KeyVal> params = getDefaultCourseListPostParams(termValue);
+		
+		String url = "https://owlexpress.kennesaw.edu//prodban/bwckschd.p_get_crse_unsec";
+		Document doc = sendPostRequestAndGetDoc(url, params, timeout);
+	
+		return doc;
+	}
+	
 	
 	/**
 	 * 

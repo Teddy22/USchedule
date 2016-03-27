@@ -1,40 +1,56 @@
 package schedulerentities;
 
-public class Course {
-	private String subjectName;
-	private String subjectNum;
-	private String subjectTitle;
+public class Course implements Comparable<Course>{
+	private Subject subject;
+	private String courseNum;
+	private String courseTitle;
 	
-	private Course() {}
 	
-	public Course(String courseName, String courseNum, String courseTitle) {
-		super();
-		this.subjectName = courseName;
-		this.subjectNum = courseNum;
-		this.subjectTitle = courseTitle;
+	public Course(Subject subject, String courseNum, String courseTitle) {
+		this.subject = subject;
+		this.courseTitle = courseNum;
+		this.courseTitle = courseTitle;
 	}
 	
-	public Course(String subjectName, Integer subjectNum, String subjectTitle) {
-		super();
-		this.subjectName = subjectName;
-		this.subjectNum = subjectNum.toString();
-		this.subjectTitle = subjectTitle;
+	public Course(Subject subject, Integer subjectNum, String subjectTitle) {
+		this.subject = subject;
+		this.courseTitle = subjectNum.toString();
+		this.courseTitle = subjectTitle;
 	}
 
-	public String getCourseName() {
-		return subjectName;
+	public Subject getSubject() {
+		return this.subject;
 	}
 
 	public String getCourseNum() {
-		return subjectNum;
+		return this.courseNum;
 	}
 
 	public String getCourseTitle() {
-		return subjectTitle;
+		return this.courseTitle;
+	}
+
+	@Override
+	public int compareTo(Course course) {
+		if(this.getSubject().compareTo(course.getSubject()) > 0) {
+			return 1;
+		} else if(this.getSubject().compareTo(course.getSubject()) < 0) {
+			return -1;
+		} else {
+			if(this.getCourseNum().compareTo(course.getCourseNum()) > 0) {
+				return 1;
+			} else if(this.getCourseNum().compareTo(course.getCourseNum()) < 0) {
+				return -1;
+			} else {
+				if(this.getCourseTitle().compareTo(course.getCourseTitle()) > 0) {
+					return 1;
+				} else if(this.getCourseTitle().compareTo(course.getCourseTitle()) < 0) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+		}
 	}
 	
-	public boolean hasMultipleTitles() {
-		// TODO implement hasMultipleTitles, currently throws a runtime exception
-		throw new RuntimeException("method has not yet been implemented");
-	}
 }
