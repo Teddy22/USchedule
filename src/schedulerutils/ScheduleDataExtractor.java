@@ -4,6 +4,7 @@ import java.rmi.dgc.Lease;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -82,7 +83,7 @@ public class ScheduleDataExtractor {
 	/**
 	 * 
 	 * @param termId
-	 * @return
+	 * @return a HashMap of String key-value pairs with the key and value as unique instructor ID and the instructor name
 	 */
 	public static HashMap<String, String> getInstructorsMap(Integer termId) {
 		Elements elements = ScheduleParser.getInstructorSelectOptionsHTML(termId, TIME_OUT);
@@ -101,20 +102,134 @@ public class ScheduleDataExtractor {
 		return instructors;
 	}
 	
-	public static List<Element> getSectionsMap(Integer termId) {
-		HashMap<String,String> map = new HashMap<>();
+	public static List<Map<String, String>> getSectionMaps(Integer termId) {
+		List<Map<String,String>> ls = new ArrayList<Map<String,String>>();
 		
-		Document doc = ScheduleParser.getAllSubjectsForTermPageHTML(termId, 0);
+		// TODO change this to pick up all courses
+		Document doc = ScheduleParser.getSubjectsResultPageBySubjectNamesOnlyHTML(201601, TIME_OUT, "ARH");
 		ArrayList<List<Element>> sections = ScheduleParser.isolateCourseListingsTableRowsHTML(doc);
 		
-		List<Elements> els = new ArrayList<>();
-		
 		for(List<Element> list: sections) {
-			for(Element el: list) {
-				System.out.println(el);
-			}
-			break;
+			Map<String, String> section = extractSectionMap(list);
+			ls.add(section);
 		}
-		return null;
+		return ls;
+	}
+
+	/**
+	 * 
+	 * @param list - A list of all html elements that make up a single section
+	 * @return HashMap of key value pairs for all properties of a section made of list of the passed elements
+	 */
+	private static HashMap<String, String> extractSectionMap(List<Element> list) {
+		
+		if(list.size() !=8) {
+			throw new ScheduleDataExtractorException("error extracting section's data from section html");
+		} else {
+			HashMap<String, String> map = new HashMap<String, String>();
+		
+			Map<String, String> sectionHeaderMap = getSectionHeaderMap(list.get(2)); // sections header e.g. course name
+			map.putAll(sectionHeaderMap);
+			
+			Map<String, String> sectionStatsMap = getsectionStatsMap(list.get(3));
+			map.putAll(sectionStatsMap);
+			
+			Map<String, String> meetingPlaceTimesMap = meetingPlaceTimesMap(list.get(3));
+			map.putAll(meetingPlaceTimesMap);
+
+			return map;
+		}
+	}
+
+	/**
+	 * 
+	 * @param element - jsoup Element object representing web page's section header html
+	 * @return
+	 */
+	private static Map<String, String> getSectionHeaderMap(Element element) {
+		Map<String, String> map = new HashMap<>();
+		
+		String text = element.text().trim();
+		String[] items = text.split(" - ");
+		
+		if(items.length != 2) {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section header data(1)");
+		}
+		
+		String courseInfo = items[0].trim();
+		
+		String[] course = courseInfo.split("\\s");
+		
+		if(course.length != 2) {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section header data(2)");
+		}
+		
+		String subjectAbbreviation = course[0]; // subject abbreviation
+		String courseNumAndSection = course[1]; 
+		
+		String[] subjectNumAndSectionIdArray = courseNumAndSection.trim().split("/");
+		
+		if(subjectNumAndSectionIdArray.length != 2) {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section header data(3)");
+		}
+		
+		String subjectNum; // subject number
+		if(isInteger(subjectNumAndSectionIdArray[0])) {
+			subjectNum = subjectNumAndSectionIdArray[0];
+		} else {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section header data(4)");
+		}
+		
+		String sectionId = subjectNumAndSectionIdArray[1]; // section id
+	
+		
+		String subjectName = items[1]; // subject name
+		
+		map.put("SubjectAbbreviation", subjectAbbreviation);
+		map.put("SubjectNumber", subjectNum);
+		map.put("SectionId", sectionId);
+		map.put("SubjectName", subjectName);
+		
+		return map;
+	}
+	
+	
+	private static boolean isInteger(String str) {
+		
+		try {
+			Integer.parseInt(str);
+		} catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	private static boolean isDouble(String str) {
+		
+		try {
+			Double.parseDouble(str);
+		} catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
+
+	private static Map<String, String> getsectionStatsMap(Element element) {
+		Map<String, String> map = new HashMap<>();
+		
+		System.out.println("\n===================Section Header==================\n");
+		System.out.println(element.text());
+		System.out.println("\n====================================================\n");
+		
+		return map;
+	}
+	
+	
+	private static Map<String, String> meetingPlaceTimesMap(Element element) {
+		Map<String, String> map = new HashMap<>();
+		
+		return map;
 	}
 }

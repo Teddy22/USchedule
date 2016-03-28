@@ -50,7 +50,7 @@ public class Tests {
 		}*/
 		
 		//Document doc = ScheduleParser.getAllSubjectsForTermPageHTML(201601, 0);
-		ScheduleDataExtractor.getSectionsMap(201601);
+		ScheduleDataExtractor.getSectionMaps(201601);
 		
 		//pw.write(doc.toString());
 		pw.close();		

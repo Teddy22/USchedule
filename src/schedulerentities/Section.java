@@ -4,6 +4,9 @@ import java.sql.Time;
 import java.util.ArrayList;
 
 public class Section {
+	
+	private String sectionId;
+	
 	private Term term;
 	private Session session;
 	
@@ -27,8 +30,11 @@ public class Section {
 	
 	private boolean hasMultipleMeetingPlaceTimes;
 	
-	private Section() {}
 	
+	public String getSectionId() {
+		return this.sectionId;
+	}
+
 	public Section(Term term, Integer CRN) {
 		throw new RuntimeException("constructor not yet implemented");
 	}
