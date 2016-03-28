@@ -1,16 +1,15 @@
 package schedulerutils;
 
-import java.rmi.dgc.Lease;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
+
 import java.util.Map;
+import java.util.HashMap;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import schedulerentities.Term;
 import schedulerexceptions.ScheduleDataExtractorException;
 
 public class ScheduleDataExtractor {
