@@ -131,7 +131,7 @@ public class ScheduleDataExtractor {
 			Map<String, String> sectionHeaderMap = getSectionHeaderMap(list.get(2)); // sections header e.g. course name
 			map.putAll(sectionHeaderMap);
 			
-			Map<String, String> sectionStatsMap = getsectionStatsMap(list.get(3));
+			Map<String, String> sectionStatsMap = getSectionStatsMap(list.get(3));
 			map.putAll(sectionStatsMap);
 			
 			Map<String, String> meetingPlaceTimesMap = meetingPlaceTimesMap(list.get(3));
@@ -193,6 +193,24 @@ public class ScheduleDataExtractor {
 		return map;
 	}
 	
+
+	private static Map<String, String> getSectionStatsMap(Element element) {
+		Map<String, String> map = new HashMap<>();
+		
+		System.out.println("\n===================Section Header==================\n");
+		System.out.println(element.text());
+		System.out.println("\n====================================================\n");
+		
+		return map;
+	}
+	
+	
+	private static Map<String, String> meetingPlaceTimesMap(Element element) {
+		Map<String, String> map = new HashMap<>();
+		
+		return map;
+	}
+	
 	
 	private static boolean isInteger(String str) {
 		
@@ -213,23 +231,5 @@ public class ScheduleDataExtractor {
 			return false;
 		}
 		return true;
-	}
-
-
-	private static Map<String, String> getsectionStatsMap(Element element) {
-		Map<String, String> map = new HashMap<>();
-		
-		System.out.println("\n===================Section Header==================\n");
-		System.out.println(element.text());
-		System.out.println("\n====================================================\n");
-		
-		return map;
-	}
-	
-	
-	private static Map<String, String> meetingPlaceTimesMap(Element element) {
-		Map<String, String> map = new HashMap<>();
-		
-		return map;
 	}
 }
