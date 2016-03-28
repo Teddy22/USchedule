@@ -181,7 +181,6 @@ public class ScheduleDataExtractor {
 		}
 		
 		String sectionId = subjectNumAndSectionIdArray[1]; // section id
-	
 		
 		String subjectName = items[1]; // subject name
 		
@@ -193,13 +192,40 @@ public class ScheduleDataExtractor {
 		return map;
 	}
 	
-
+	/**
+	 * 
+	 * @param element - jsoup element object representing the stats html part of a section. stats like number of seats, waitlist availability etc.
+	 * @return Map of String key value pairs for each of the stats name and value
+	 */
 	private static Map<String, String> getSectionStatsMap(Element element) {
 		Map<String, String> map = new HashMap<>();
 		
-		System.out.println("\n===================Section Header==================\n");
-		System.out.println(element.text());
-		System.out.println("\n====================================================\n");
+		Elements elements = element.select("tbody > tr");
+		
+		if(elements.size() != 2) {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section stats data(1)");
+		}
+		
+		Elements sectionStatsHeaders = elements.get(0).select("th");
+		Elements sectionStats = elements.get(1).select("td");
+		
+		if(sectionStatsHeaders.size() != sectionStats.size()) {
+			throw new ScheduleDataExtractorException("unexpected html data format while extracting section stats data(2)");
+		}
+		
+		for(int i = 0; i < sectionStatsHeaders.size(); i++) {
+			if(sectionStatsHeaders.get(i).text().trim() == "") {
+				throw new ScheduleDataExtractorException("unexpected html data format while extracting section stats data(3)");
+			} else {
+				String key = sectionStatsHeaders.get(i).text().replaceAll("\\s+", "");
+				String value = sectionStats.get(i).text().trim().replaceAll("\\s+", "").replaceAll("\u00a0", "");
+				
+				if(value.length() == 0)
+					value = null;
+				
+				map.put(key, value);
+			}
+		}		
 		
 		return map;
 	}
@@ -207,7 +233,8 @@ public class ScheduleDataExtractor {
 	
 	private static Map<String, String> meetingPlaceTimesMap(Element element) {
 		Map<String, String> map = new HashMap<>();
-		
+		System.out.println("\n===================Meeting Place Time==================\n");
+		System.out.println("\n====================================================\n");
 		return map;
 	}
 	
