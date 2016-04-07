@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 import schedulerentities.Instructor;
@@ -48,13 +50,24 @@ public class Tests {
 			pw.write("\n\n");
 			
 		}*/
+		String x = "<tr><td>&nbsp;</td><td>X</td><td>&nbsp;</td><td>X</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 		
+		//Document d = Jsoup.parse(x, "", Parser.xmlParser());
+		//Elements e = d.select("td");
+		
+		//System.out.println(e.size());
 		//Document doc = ScheduleParser.getAllSubjectsForTermPageHTML(201601, 0);
-		ScheduleDataExtractor.getSectionMaps(201601);
+		ScheduleDataExtractor datum = new ScheduleDataExtractor();
+		datum.getSectionMaps(201601);
 		
 		//pw.write(doc.toString());
 		pw.close();		
 		
+		
+	}
+	
+	static void create() {
+		final int x = 0;
 	}
 
 }

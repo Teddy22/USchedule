@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class Term {
 	private int termID;
+	private Season season;
+	private int YEAR;
 	private String termName;
 
 	public Term(int termID, String termName) {

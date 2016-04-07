@@ -2,23 +2,28 @@ package schedulerutils;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import schedulerexceptions.ScheduleDataExtractorException;
 
+/**
+ * @author Teddy
+ * 
+ * This class contains various methods for extracting schedule data from the parsed HTML of the web page
+ */
 public class ScheduleDataExtractor {
 	
 	/**
-	 * 
-	 * @return a HahMap of termID and termName Strings as key value pairs
+	 * time out value when making HTTP calls
 	 */
-	private static final int TIME_OUT = 0; // time out value when making HTTP calls
+	private static final int TIME_OUT = 0;
 	
 	/**
 	 * 
@@ -46,7 +51,7 @@ public class ScheduleDataExtractor {
 	/**
 	 * 
 	 * @param termID - Integer representing the Term ID - e.g. 201601 for Spring 2016
-	 * @return
+	 * @return a HashMap<String, String> with the subject abbreviations and subject full names as key value pairs
 	 */
 	public static HashMap<String, String> getSubjectsMap(Integer termID) {
 		Elements elements = ScheduleParser.getSubjectSelectOptionsHTML(termID, TIME_OUT);
@@ -101,11 +106,12 @@ public class ScheduleDataExtractor {
 		return instructors;
 	}
 	
-	public static List<Map<String, String>> getSectionMaps(Integer termId) {
+	public List<Map<String, String>> getSectionMaps(Integer termId) {
+		
 		List<Map<String,String>> ls = new ArrayList<Map<String,String>>();
 		
 		// TODO change this to pick up all courses
-		Document doc = ScheduleParser.getSubjectsResultPageBySubjectNamesOnlyHTML(201601, TIME_OUT, "ARH");
+		Document doc = ScheduleParser.getSubjectsResultPageByCourseNameAndNumberHTML(termId, TIME_OUT, "CS", 3410);
 		ArrayList<List<Element>> sections = ScheduleParser.isolateCourseListingsTableRowsHTML(doc);
 		
 		for(List<Element> list: sections) {
@@ -120,8 +126,8 @@ public class ScheduleDataExtractor {
 	 * @param list - A list of all html elements that make up a single section
 	 * @return HashMap of key value pairs for all properties of a section made of list of the passed elements
 	 */
-	private static HashMap<String, String> extractSectionMap(List<Element> list) {
-		
+	private HashMap<String, String> extractSectionMap(List<Element> list) {
+		assert(list != null);
 		if(list.size() !=8) {
 			throw new ScheduleDataExtractorException("error extracting section's data from section html");
 		} else {
@@ -133,7 +139,7 @@ public class ScheduleDataExtractor {
 			Map<String, String> sectionStatsMap = getSectionStatsMap(list.get(3));
 			map.putAll(sectionStatsMap);
 			
-			Map<String, String> meetingPlaceTimesMap = meetingPlaceTimesMap(list.get(3));
+			Map<String, String> meetingPlaceTimesMap = meetingPlaceTimesMap(list.get(4));
 			map.putAll(meetingPlaceTimesMap);
 
 			return map;
@@ -145,7 +151,8 @@ public class ScheduleDataExtractor {
 	 * @param element - jsoup Element object representing web page's section header html
 	 * @return
 	 */
-	private static Map<String, String> getSectionHeaderMap(Element element) {
+	private Map<String, String> getSectionHeaderMap(Element element) {
+		
 		Map<String, String> map = new HashMap<>();
 		
 		String text = element.text().trim();
@@ -196,7 +203,8 @@ public class ScheduleDataExtractor {
 	 * @param element - jsoup element object representing the stats html part of a section. stats like number of seats, waitlist availability etc.
 	 * @return Map of String key value pairs for each of the stats name and value
 	 */
-	private static Map<String, String> getSectionStatsMap(Element element) {
+	private Map<String, String> getSectionStatsMap(Element element) {
+
 		Map<String, String> map = new HashMap<>();
 		
 		Elements elements = element.select("tbody > tr");
@@ -230,15 +238,146 @@ public class ScheduleDataExtractor {
 	}
 	
 	
-	private static Map<String, String> meetingPlaceTimesMap(Element element) {
+	/**
+	 * 
+	 * @param element
+	 * @return a HasMap of Meeting Place Time data
+	 */
+	private Map<String, String> meetingPlaceTimesMap(Element element) {
 		Map<String, String> map = new HashMap<>();
-		System.out.println("\n===================Meeting Place Time==================\n");
-		System.out.println("\n====================================================\n");
+		
+		System.out.println("\n===================Meeting Place Times==================\n");
+		Elements elements = element.select("tbody > tr[align!=center]");
+		ArrayList<Integer> ints = new ArrayList<>();
+		
+		for(int i = 0; i < elements.size(); i++) { // find isolated and duplicated days of week table rows
+			if(isDaysOfWeekTabeRow(elements.get(i))) {
+				ints.add(i);
+			}
+		}
+		
+		for(int i: ints) { // clear isolated and duplicated days of week table rows
+			elements.remove(i);
+		}
+		
+		if(elements.size() < 2) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting meeting place times data");
+		}
+		
+		List<String> meetingPlaceTimesHeaders = getMeetingPlaceTimesHeaders(elements);
+		List<String> meetingPlaceTimesData = getMeetingPlaceTimesData(elements);
+		
+		/*if(meetingPlaceTimesHeaders.size() != meetingPlaceTimesData.size()) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting meeting place times data");
+		}*/
+		System.out.println("\n=================================================================================\n");
+		
 		return map;
 	}
 	
 	
-	private static boolean isInteger(String str) {
+	private List<String> getMeetingPlaceTimesHeaders(Elements elements) {
+		List<String> list = new ArrayList<String>();
+		
+		if(elements.size() < 2) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting meeting place times data");
+		}
+		
+		Elements headers = elements.get(0).select("th");
+		
+		for(Element header: headers) {
+			String text = header.text().trim().replaceAll("\\s+", "");
+			list.add(text);
+		}
+		
+		return list;
+	}
+	
+	private List<String> getMeetingPlaceTimesData(Elements elements) {
+		List<String> list = new ArrayList<String>();
+		
+		if(elements.size() < 2) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting meeting place times data");
+		}
+		
+		List<Element> data = elements.subList(1, elements.size());
+		
+		for(Element el: data) {
+			list = extractMeetingPlaceTimesData(el);
+		}
+		return list;
+	}
+
+	
+	private List<String> extractMeetingPlaceTimesData(Element element) {
+		List<String> list = new ArrayList<String>();
+		
+		Elements elements = element.children();
+		
+		String[] ls = new String[elements.size()];
+		
+		for(Element dataRow: elements) {
+			String text;
+			if(dataRow.select("table").size() > 0) {
+				text = extractDaysOfWeekString(dataRow);
+			} else {
+				text = dataRow.text().trim().replaceAll("\\s+", " ").replaceAll("\u00a0", "");
+			}
+			System.out.println(text);
+		}
+		
+		
+		
+		return list;
+	}
+
+	private String extractDaysOfWeekString(Element element) {
+		
+		String result = "";
+		
+		Elements elements = element.select("tbody > tr");
+		
+		if(elements.size() < 2) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting days of week data (1)");
+		}
+		
+		Elements daysOfWeekTitles = elements.get(0).select("td");
+		Elements daysOfWeekMarks = elements.get(1).select("td");
+		
+		if(daysOfWeekTitles.size() != daysOfWeekMarks.size()) {
+			throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting days of week data (2)");
+		}
+		
+		for(int i = 0; i < daysOfWeekTitles.size(); i++) {
+			String dayOfWeekTitle = daysOfWeekTitles.get(i).text().trim().replaceAll("\\s+", " ").replaceAll("\u00a0", "").replace("&nbsp;", "");
+			String dayOfWeekMark = daysOfWeekMarks.get(i).text().trim().replaceAll("\\s+", " ").replaceAll("\u00a0", "").replaceAll("&nbsp;", "");
+			
+			if(dayOfWeekTitle.equals("")) {
+				throw new ScheduleDataExtractorException("unexpected number of rows of data while extracting days of week data (3)");
+			} else if(dayOfWeekMark == "") {
+				dayOfWeekMark = "no";
+			} else {
+				result += dayOfWeekTitle + ":" + dayOfWeekMark + ";";
+			}
+		}
+		return result;
+	}
+
+
+	private boolean isDaysOfWeekTabeRow(Element el) {
+		if(el.tagName() != "tr" && el.select("td").size() == 7 && (el.text().contains("X") || el.text().contains("\u00a0"))) {
+			return true;
+		} else if(el.select("td").size() != 7) {
+			return false;
+		} else if(el.select("td").size() == 7 && (el.text().contains("X") || el.text().contains("\u00a0")))
+			return true;
+		else {
+			throw new ScheduleDataExtractorException("unexpected data format while checking for day of week condition");
+		}
+	}
+
+
+	private boolean isInteger(String str) {
 		
 		try {
 			Integer.parseInt(str);
@@ -249,7 +388,7 @@ public class ScheduleDataExtractor {
 	}
 	
 	
-	private static boolean isDouble(String str) {
+	private boolean isDouble(String str) {
 		
 		try {
 			Double.parseDouble(str);
